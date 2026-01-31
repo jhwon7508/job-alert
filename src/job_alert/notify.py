@@ -6,10 +6,6 @@ def send_to_discord(webhook_url: str, jobs: List[Dict]):
         print("Warning: DISCORD_WEBHOOK_URL not set. Skipping notification.")
         return
 
-    if not jobs:
-        print("No jobs to notify.")
-        return
-
     # Sort jobs by score desc
     jobs.sort(key=lambda x: x['score'], reverse=True)
 
@@ -17,12 +13,12 @@ def send_to_discord(webhook_url: str, jobs: List[Dict]):
         # Format message
         message = (
             f"[{job['source']}] **{job['title']}**\n"
-            f"score={job['score']}\n"
-            f"reason={job['reason']}\n"
-            f"{job['url']}"
+            f"Score: {job['score']}\n"
+            f"Reason: {job['reason']}\n"
+            f"URL: {job['url']}"
         )
         
-        # Ensure it fits Discord's 2000 char limit (though individual job alerts are small)
+        # Ensure it fits Discord's 2000 char limit
         if len(message) > 2000:
             message = message[:1997] + "..."
 
@@ -31,3 +27,12 @@ def send_to_discord(webhook_url: str, jobs: List[Dict]):
             response.raise_for_status()
         except Exception as e:
             print(f"Error sending to Discord: {e}")
+
+def send_summary(webhook_url: str, summary: str):
+    if not webhook_url:
+        return
+    try:
+        response = requests.post(webhook_url, json={"content": summary})
+        response.raise_for_status()
+    except Exception as e:
+        print(f"Error sending summary to Discord: {e}")

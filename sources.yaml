@@ -26,5 +26,5 @@ scoring:
   exclude_penalty: -100
 
 digest:
-  min_score: 5
+  min_score: 1
   max_items: 10
